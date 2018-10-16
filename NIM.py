@@ -20,7 +20,7 @@ class NIM:
 
         if self.K > self.N - self.K:
 
-            return list(range(1, self.N+1))
+            return list(range(1, self.N))
 
         return list(range(1, self.K+1))
 
@@ -30,3 +30,7 @@ class NIM:
 
     def __str__(self):
         return "N="+str(self.N)+", K="+str(self.K)
+
+    def __copy__(self):
+
+        return NIM(self.N, self.K)
