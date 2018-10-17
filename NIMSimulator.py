@@ -1,39 +1,42 @@
+from Player import *
 from NIM import *
 import random
 from StateManager import *
 from MCTS import *
+from Policy import *
+
 if __name__ == '__main__':
 
-    N = 3
-    K = 2
+    N = 100
+    K = 20
+    init_player = Player.PLAYER_1
+    policy = Policy()
+
     stateman = StateManager()
-    game = stateman.generate_initial_state([N, K])
-    print("Valid moves")
-    print(game.getValidMoves())
-    print(game)
+    game = stateman.generate_initial_state([N, K], player=init_player)
 
-    for g in stateman.generate_child_states(game):
-        print(g)
+    mcts = MCTS(stateman, [N, K, init_player])
+    print(mcts.root)
+    mcts.node_expansion(mcts.tree)
 
+    print(mcts.rollout(State(mcts.root, init_player), policy))
 
-    mcts = MCTS(stateman)
-    mcts.generate_tree(game)
-    pass
+    mcts.tree.print_entire_tree()
+
     exit(1)
+    initial_state = State(game, Player.PLAYER_1)
+    state = initial_state
+
     while not game.isDone():
 
-        player_1 = game.getValidMoves()[random.randint(0, len(game.getValidMoves()) - 1)]
+        init_player = state.player
+        choice = mcts.tree_search(state.game, policy)
+        game.take(choice.move)
+        print(choice)
+        print(game)
 
-        game.take(player_1)
-        print("Player 1 took", player_1)
-        print(game)
         if game.isDone():
-            print("Player 1 won")
+            print(state.player, "Won!")
             break
-        player_2 = game.getValidMoves()[random.randint(0, len(game.getValidMoves()) - 1)]
-        game.take(player_2)
-        print("Player 2 took", player_2)
-        print(game)
-        if game.isDone():
-            print("Player 2 won")
-            break
+        other = Player.other(state.player)
+        state = State(game, other)
