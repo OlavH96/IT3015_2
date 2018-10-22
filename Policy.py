@@ -12,29 +12,29 @@ class Policy:
         self.c = 1  # exploration factor
 
     def Q(self, state, move, z=0):
-        #print("Reward is",move.reward)
+        # print("Reward is",move.reward)
+        # print(move)
         return move.reward
 
-    def u(self, state, action):
-        Ns = state.visits
+    def u(self, node, action):
+        Ns = node.visits
         Nsa = action.visits
 
-        return self.c * sqrt(log10(Ns + 1) / (1 + Nsa))
+        return self.c * sqrt(log10(Ns) / (1 + Nsa))
 
-    def chose(self, state, actions):  # action, list of moves
-
+    def chose(self, node, actions):  # action, list of moves
+        state = node.content
         options = []
         for action in actions:
-            Q = self.Q(state, action)
-            u = self.u(state, action)
+            Q = self.Q(node, action)
+            u = self.u(node, action)
 
             if state.player == self.player:
                 sum = Q + u
             else:
                 sum = Q - u
             options.append(PolicyChoice(state, action, sum))
-        print("Player is", state.player)
-        print("self is", self.player)
+
         if state.player == self.player:
             return max(options, key=lambda e: e.QuSum).move
         else:

@@ -46,10 +46,12 @@ def play_game(mcts):
 
 
 if __name__ == '__main__':
-    verbose = True
-    batch = 1
-    N = 20
-    K = 5
+    verbose = False
+    G = 100
+    N = 99
+    K = 50
+    M = 10
+
     init_player = Player.PLAYER_1
     policy = Policy(init_player)
     random_policy = RandomPolicy(init_player)
@@ -57,47 +59,17 @@ if __name__ == '__main__':
     stateman = StateManager()
     game = stateman.generate_initial_state([N, K], player=init_player)
 
-    mcts = MCTS(stateman, game, policy, random_policy, M=10)
-
     wins = 0
     losses = 0
 
-    for i in range(batch):
-        mcts = MCTS(stateman, game, policy, random_policy, M=10)
+    mcts = MCTS(stateman, game, policy, random_policy, M=M)
+    for i in range(G):
         winner = play_game(mcts)
+        #mcts.tree.print_entire_tree()
         if winner == init_player: wins+=1
         else: losses +=1
     print("Wins",wins)
     print("Losses",losses)
-    print("Winrate", (wins/(losses+wins)),"%")
-
-    exit(1)
-    while not game.isDone():
-
-        choice = mcts.tree_search(state)
-        # print("choice is",choice)
-        # print(game)
-        game.take(choice.move)  # take real move
-        # print(game)
-
-        state = state.getChildByEdge(choice)
-
-        if game.isDone():
-            print(game.winner, "Won!")
-            break
-
-        # eval = mcts.evaluate_state(state)
-        # mcts.backpropagation(state, eval)
-        # state = State(game, Player.other(game.player))#state.getChild(choice)
-
-    print("\nHistory\n")
-    history = []
-    while state.parent:
-        history.append(state.parent.getEdgeTo(state).content)  # traverse in reverse order
-        state = state.parent
-    history.reverse()
-    for h in history:
-        print(h)
-    print()
-
-    # mcts.tree.print_entire_tree()
+    print("Winrate", (wins / G) * 100, "%")
+    if verbose:
+        mcts.tree.print_entire_tree()

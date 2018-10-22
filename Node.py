@@ -7,6 +7,7 @@ class Node:
         self.content = content
         self.edges = set()
         self.parent = parent
+        self.visits = 0
 
     def addChild(self, edgeContent, toContent):
         toNode = Node(toContent, self)
