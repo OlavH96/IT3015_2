@@ -20,22 +20,34 @@ class MCTS:
         losses = 0
 
         for i in range(self.M):  # num rollouts
-            next_game = game.__copy__()  # copy the initial state / game
-            while not next_game.isDone():
-                move = self.default_policy.chose(next_game, self.statemanager.get_moves(next_game))
-                # move = self.statemanager.random_legal_move(next_game)  # use policy somehow
-                if move:
-                    # node.addChild(move, move.result)
-                    next_game = move.result
-            if next_game.winnerF() == self.root.player:
+            thisNode = node.content
+            #next_game = game.__copy__()  # copy the initial state / game
+            game = thisNode.__copy__()
+
+            while not game.isDone():
+                move = self.default_policy.chose(thisNode, self.statemanager.get_moves(thisNode))
+                game.take(move.move)
+                thisNode = move.result
+            if game.winnerF() == self.root.player:
                 wins += 1
             else:
                 losses += 1
-        # print("wins", wins)
-        # print("losses", losses)
-        # print((wins - losses) / (wins + losses))
-        return (wins - losses) / (
-                    wins + losses)  # [1, -1], Q value, 1 is all games won, -1 is all games lost, 0 is 50/50 split etc
+
+
+
+
+            # while not next_game.isDone():
+            #     move = self.default_policy.chose(next_game, self.statemanager.get_moves(next_game))
+            #     # move = self.statemanager.random_legal_move(next_game)  # use policy somehow
+            #     if move:
+            #         # node.addChild(move, move.result)
+            #         next_game = move.result
+            # if next_game.winnerF() == self.root.player:
+            #     wins += 1
+            # else:
+            #     losses += 1
+        # [1, -1], Q value, 1 is all games won, -1 is all games lost, 0 is 50/50 split etc
+        return (wins - losses) / (wins + losses)
 
     def tree_search(self, node, policy=None):
         if not policy: policy = self.policy

@@ -19,11 +19,15 @@ class Policy:
     def u(self, node, action):
         Ns = node.visits
         Nsa = action.visits
+        if Ns == 0: Ns = 1
 
         return self.c * sqrt(log10(Ns) / (1 + Nsa))
 
     def chose(self, node, actions):  # action, list of moves
-        state = node.content
+
+        if hasattr(node, "content"):
+            state = node.content
+        else: state = node
         options = []
         for action in actions:
             Q = self.Q(node, action)
