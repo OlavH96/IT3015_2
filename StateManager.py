@@ -1,5 +1,6 @@
 from NIM import *
 from Move import *
+import random
 
 
 class StateManager:
@@ -29,6 +30,11 @@ class StateManager:
             copy = state.__copy__()
             out.append(Move(state, e, copy.take(e), state.player))
         return out
+
+    def random_legal_move(self, state):
+        moves = self.get_moves(state)
+        if len(moves) == 0: return None
+        return moves[random.randint(0, len(moves) - 1)]
 
     def isWinningState(self, state):
         return state.isWinningState()

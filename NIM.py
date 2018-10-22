@@ -1,5 +1,7 @@
 from Move import *
 from Player import *
+
+
 class NIM:
 
     def __init__(self, N, K, player):
@@ -42,7 +44,7 @@ class NIM:
         return self.N <= 0
 
     def __str__(self):
-        return "N=" + str(self.N) + ", K=" + str(self.K)
+        return "{N=" + str(self.N) + ", K=" + str(self.K)+"}"
 
     def __copy__(self):
 
@@ -50,4 +52,9 @@ class NIM:
 
     def __eq__(self, other):
 
-        return self.K == other.K and self.N == other.N and self.player == other.player
+        return hash(other)== hash(self)
+
+        #return self.K == other.K and self.N == other.N and self.player == other.player
+
+    def __hash__(self):
+        return hash((self.K, self.N))

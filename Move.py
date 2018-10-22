@@ -9,4 +9,10 @@ class Move:
         self.reward = 0
 
     def __str__(self):
-        return "Move: " + str(self.parent) + " -> " + str(self.move) + " -> " + str(self.result) +" by "+ str(self.player)
+        return "Move: " + str(self.parent) + " -> " + str(self.move) + " -> " + str(self.result) +" by "+ str(self.player)+", visits="+str(self.visits)+", reward="+str(self.reward)
+
+    def __hash__(self):
+
+        return hash((self.parent, self.move, self.result))
+    def __eq__(self, other):
+        return hash(self) == hash(other)
