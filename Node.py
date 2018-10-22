@@ -18,9 +18,9 @@ class Node:
         return Node.find(content, self)
 
     def getChildByEdge(self, edgeContent):
-        print("Finding",edgeContent)
+        #print("Finding",edgeContent)
         for edge in self.edges:
-            print(edge.content)
+         #   print(edge.content)
             if edge.content == edgeContent: return edge.toState
 
     def getEdgeTo(self, otherNode):
@@ -55,3 +55,4 @@ class Node:
             node = Node.find(content, c.toState)
             if node is not None:
                 return node
+

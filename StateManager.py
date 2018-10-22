@@ -37,7 +37,7 @@ class StateManager:
         return moves[random.randint(0, len(moves) - 1)]
 
     def isWinningState(self, state):
-        return state.isWinningState()
+        return state.isDone()
 
     def reward(self, state):
         return 1 if state.isWinningState() and state.player else -1

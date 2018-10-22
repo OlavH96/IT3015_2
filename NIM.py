@@ -9,22 +9,24 @@ class NIM:
         self.N = N  # Pieces on the board
         self.K = K  # max pieces you can take, you can take less, but not more.
         self.visits = 0
-        self.history = []
         self.winner = None
+
+    def winnerF(self):
+        if not self.isDone(): return None
+
+        return self.player
 
     def take(self, number):
 
         if not self.isValidMove(number):
             raise Exception("Invalid move", number, "for game", self)
 
-        before = self.__copy__()
         self.N -= number
-        after = self.__copy__()
 
-        self.history.append(Move(before, number, after, self.player))
         if self.isDone():
             self.winner = self.player
-        self.player = Player.other(self.player)
+        else:
+            self.player = Player.other(self.player)
 
         return self
 
@@ -44,7 +46,7 @@ class NIM:
         return self.N <= 0
 
     def __str__(self):
-        return "{N=" + str(self.N) + ", K=" + str(self.K)+"}"
+        return "{N=" + str(self.N) + ", K=" + str(self.K) + "}"
 
     def __copy__(self):
 
@@ -52,9 +54,9 @@ class NIM:
 
     def __eq__(self, other):
 
-        return hash(other)== hash(self)
+        return hash(other) == hash(self)
 
-        #return self.K == other.K and self.N == other.N and self.player == other.player
+        # return self.K == other.K and self.N == other.N and self.player == other.player
 
     def __hash__(self):
         return hash((self.K, self.N))

@@ -1,3 +1,4 @@
+from Player import Player
 from State import *
 from Move import *
 
@@ -8,9 +9,10 @@ class Policy:
 
     def __init__(self, player):
         self.player = player
-        self.c = 0.5  # exploration factor
+        self.c = 1  # exploration factor
 
     def Q(self, state, move, z=0):
+        #print("Reward is",move.reward)
         return move.reward
 
     def u(self, state, action):
@@ -31,10 +33,8 @@ class Policy:
             else:
                 sum = Q - u
             options.append(PolicyChoice(state, action, sum))
-
-        # print("Options")
-        # for o in options:
-        #     print(o)
+        print("Player is", state.player)
+        print("self is", self.player)
         if state.player == self.player:
             return max(options, key=lambda e: e.QuSum).move
         else:
