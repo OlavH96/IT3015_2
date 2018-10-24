@@ -1,10 +1,5 @@
 import random
 
-from State import *
-from Move import *
-
-from math import sqrt, log10
-
 
 class RandomPolicy:
 

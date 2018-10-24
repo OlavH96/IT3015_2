@@ -22,12 +22,12 @@ class Node:
         #print("Finding",edgeContent)
         for edge in self.edges:
          #   print(edge.content)
-            if edge.content == edgeContent: return edge.toState
+            if edge.content == edgeContent: return edge.toNode
 
     def getEdgeTo(self, otherNode):
 
         for edge in self.edges:
-            if edge.toState == otherNode:
+            if edge.toNode == otherNode:
                 return edge
         return None
 
@@ -43,7 +43,7 @@ class Node:
         print(to_print, node, "->", edge)
         for edge in node.edges:
             # print("Edge",edge)
-            to = edge.toState
+            to = edge.toNode
             # print("To",to)
             self.print_tree(to, i + 1, edge)
 

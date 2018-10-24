@@ -1,5 +1,4 @@
 from Player import Player
-from State import *
 from Move import *
 
 from math import sqrt, log10
@@ -9,11 +8,9 @@ class Policy:
 
     def __init__(self, player):
         self.player = player
-        self.c = 1  # exploration factor
+        self.c = 0.5  # exploration factor
 
     def Q(self, state, move, z=0):
-        # print("Reward is",move.reward)
-        # print(move)
         return move.reward
 
     def u(self, node, action):
@@ -23,11 +20,12 @@ class Policy:
 
         return self.c * sqrt(log10(Ns) / (1 + Nsa))
 
-    def chose(self, node, actions):  # action, list of moves
+    def chose(self, node, actions):
 
         if hasattr(node, "content"):
             state = node.content
-        else: state = node
+        else:
+            state = node
         options = []
         for action in actions:
             Q = self.Q(node, action)

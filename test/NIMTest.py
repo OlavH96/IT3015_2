@@ -15,7 +15,4 @@ if __name__ == '__main__':
         rand_choice = moves[random.randint(0, len(moves) - 1)]
         game.take(rand_choice)
 
-    for h in game.history:
-        print(h)
-
     print("Winner is", game.winner)

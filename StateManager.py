@@ -36,8 +36,15 @@ class StateManager:
         if len(moves) == 0: return None
         return moves[random.randint(0, len(moves) - 1)]
 
-    def isWinningState(self, state):
+    def is_final_state(self, state):
         return state.isDone()
 
     def reward(self, state):
-        return 1 if state.isWinningState() and state.player else -1
+        return 1 if state.is_final_state() and state.player else -1
+
+    def do_move(self, state, move):
+        copy = state.__copy__()
+        copy.take(move.move)
+        return copy
+    def is_win(self, state):
+        return state.winnerF() == self.initial_player

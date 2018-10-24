@@ -47,11 +47,13 @@ def play_game(mcts):
 
 if __name__ == '__main__':
     verbose = True
-    G = 100
-    M = 100
 
-    N = 11
-    K = 5
+    G = 10
+    M = 300
+
+    N = 15
+    K = 7
+    P = "Player 1"
 
     init_player = Player.PLAYER_1
     policy = Policy(init_player)
@@ -66,14 +68,15 @@ if __name__ == '__main__':
     mcts = MCTS(statemanager=stateman, initial_state=game, policy=policy, default_policy=random_policy, M=M)
     for i in range(G):
         winner = play_game(mcts)
-        #mcts.tree.print_entire_tree()
-        if winner == init_player: wins+=1
-        else: losses +=1
+        # mcts.tree.print_entire_tree()
+        if winner == init_player:
+            wins += 1
+        else:
+            losses += 1
 
     if verbose:
         mcts.tree.print_entire_tree()
 
-    print("Wins",wins)
-    print("Losses",losses)
+    print("Wins", wins)
+    print("Losses", losses)
     print("Winrate", (wins / G) * 100, "%")
-
