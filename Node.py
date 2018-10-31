@@ -19,9 +19,7 @@ class Node:
         return Node.find(content, self)
 
     def getChildByEdge(self, edgeContent):
-        #print("Finding",edgeContent)
         for edge in self.edges:
-         #   print(edge.content)
             if edge.content == edgeContent: return edge.toNode
 
     def getEdgeTo(self, otherNode):
@@ -39,8 +37,13 @@ class Node:
 
     def print_tree(self, node, i, edge=None):
         to_print = "|" * i
-        #if edge: print(to_print, edge)
-        print(to_print, node, "->", edge)
+        # if edge: print(to_print, edge)
+        if edge:
+            print(to_print, edge.content.move, "->", edge.toNode.content, "[reward=", edge.content.reward, ", visits=",
+                  str(edge.content.visits) + "]")
+        else:
+            print(to_print, node.content)
+
         for edge in node.edges:
             # print("Edge",edge)
             to = edge.toNode
@@ -56,4 +59,3 @@ class Node:
             node = Node.find(content, c.toState)
             if node is not None:
                 return node
-

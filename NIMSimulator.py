@@ -4,19 +4,22 @@ import random
 from StateManager import *
 from MCTS import *
 from Policy import *
-from RandomPolicy import *
 
 
-def play_game(mcts):
+def play_game(mcts, player):
     start = mcts.tree
     state = start
     game = start.content.__copy__()
+    game.player = player
+    game.initial_player = player
 
+    history = []
     while not game.isDone():
 
         choice = mcts.tree_search(state)
         # print("choice is",choice)
         # print(game)
+        history.append((game.player, choice))
         game.take(choice.move)  # take real move
         # print(game)
 
@@ -24,57 +27,63 @@ def play_game(mcts):
 
         if game.isDone():
             if verbose:
-                print(game.winner, "Won!")
+                if game.winner == player:
+                    print("Initial Player", player, "won!")
+                else:
+                    print("Initial Player", player, "lost!")
             break
-
-        # eval = mcts.evaluate_state(state)
-        # mcts.backpropagation(state, eval)
-        # state = State(game, Player.other(game.player))#state.getChild(choice)
-
     if verbose:
-
-        print("\nHistory\n")
-        history = []
-        while state.parent:
-            history.append(state.parent.getEdgeTo(state).content)  # traverse in reverse order
-            state = state.parent
+        print("History")
         history.reverse()
         for h in history:
-            print(h)
-        print()
+            print(h[0],h[1])
+        print("-" * 30)
     return game.winner
 
 
 if __name__ == '__main__':
-    verbose = True
+    verbose = False
+    print_tree = False
 
-    G = 10
-    M = 300
+    G = 1
+    M = 200
 
-    N = 15
-    K = 7
-    P = "Player 1"
+    N = 100
+    K = 70
+    P = "mix"
 
-    init_player = Player.PLAYER_1
+    if P == "Player 1":
+        init_player = Player.PLAYER_1
+    if P == "Player 2":
+        init_player = Player.PLAYER_2
+    if P == "mix":
+        init_player = random.choice([Player.PLAYER_1, Player.PLAYER_2])
+    else: raise Exception("Invalid Player Choice")
+
+    wins = 0
+    losses = 0
     policy = Policy(init_player)
-    random_policy = RandomPolicy(init_player)
 
     stateman = StateManager()
     game = stateman.generate_initial_state([N, K], player=init_player)
 
-    wins = 0
-    losses = 0
+    mcts = MCTS(statemanager=stateman, initial_state=game, policy=policy, default_policy=policy, M=M)
 
-    mcts = MCTS(statemanager=stateman, initial_state=game, policy=policy, default_policy=random_policy, M=M)
     for i in range(G):
-        winner = play_game(mcts)
+
+        winner = play_game(mcts, init_player)
         # mcts.tree.print_entire_tree()
         if winner == init_player:
             wins += 1
         else:
             losses += 1
+        if P == "mix" or P == "Mix":
+            if random.random() > 0.5:  # 50% chance for either player
+                init_player = Player.other(init_player)
 
-    if verbose:
+
+
+    if print_tree:
         mcts.tree.print_entire_tree()
 
     print("Wins", wins)

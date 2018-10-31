@@ -4,7 +4,8 @@ from Player import *
 
 class NIM:
 
-    def __init__(self, N, K, player):
+    def __init__(self, N, K, player, initial_player):
+        self.initial_player = initial_player
         self.player = player
         self.N = N  # Pieces on the board
         self.K = K  # max pieces you can take, you can take less, but not more.
@@ -50,7 +51,7 @@ class NIM:
 
     def __copy__(self):
 
-        return NIM(self.N, self.K, self.player)
+        return NIM(self.N, self.K, self.player, self.initial_player)
 
     def __eq__(self, other):
 

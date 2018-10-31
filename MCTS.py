@@ -1,6 +1,5 @@
 from Node import *
 from Move import *
-from Player import *
 
 
 class MCTS:
@@ -13,6 +12,8 @@ class MCTS:
         self.policy = policy
         self.default_policy = default_policy
 
+    # Estimating the value of a leaf node in the tree by doing a rollout simulation using
+    # the default policy from the leaf node’s state to a final state.
     def leaf_evaluation(self, node):
         wins = 0
         losses = 0
@@ -23,7 +24,7 @@ class MCTS:
             state = initial_state.__copy__()
 
             while not self.statemanager.is_final_state(state):
-                move = self.default_policy.chose(state, self.statemanager.get_moves(state))
+                move = self.default_policy.chose(state, self.statemanager.get_moves(state), initial_state.initial_player)
                 state = self.statemanager.do_move(state, move)
 
             if self.statemanager.is_win(state):  # state.winnerF() == self.root.player:
@@ -31,17 +32,13 @@ class MCTS:
             else:
                 losses += 1
 
-        # [1, -1], Q value, 1 is all games won, -1 is all games lost, 0 is 50/50 split etc
-        # print(node)
-        # print("wins",wins)
-        # print("losses",losses)
         return (wins - losses) / (wins + losses)
 
+    # Traversing the tree from the root to a leaf node by using the tree policy
     def tree_search(self, node, policy=None):
         if not policy: policy = self.policy
-        man = self.statemanager
 
-        if len(node.edges) == 0 and not man.is_final_state(node.content):
+        if len(node.edges) == 0 and not self.statemanager.is_final_state(node.content):
             self.node_expansion(node)  # Expand nodes one layer
             node.visits += 1
             for edge in node.edges:  # Get all the moves / edges
@@ -54,15 +51,20 @@ class MCTS:
         choices = [e.content for e in node.edges]
         # for c in choices:
         #     print(c)
-        choice = policy.chose(node, choices)
+        choice = policy.chose(node, choices, node.content.initial_player)
         # print("choice", choice)
         return choice
 
+    # Generating some or all child states of a parent state, and then connecting the tree
+    # node housing the parent state (a.k.a. parent node) to the nodes housing the child states (a.k.a. child
+    # nodes).
     def node_expansion(self, node):
         moves = self.statemanager.get_moves(node.content)
         for m in moves:
             node.addChild(m, m.result)
 
+    # Passing the evaluation of a final state back up the tree, updating relevant data (see
+    # course lecture notes) at all nodes and edges on the path from the final state to the tree root.
     def backpropagation(self, node, evaluation):
 
         while node.parent:

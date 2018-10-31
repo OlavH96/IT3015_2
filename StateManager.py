@@ -10,7 +10,7 @@ class StateManager:
 
     def generate_initial_state(self, data, player):
         self.initial_player = player
-        self.game = NIM(*data, player=player)
+        self.game = NIM(*data, player=player, initial_player=player)
         return self.game
 
     def get_current_player(self):
@@ -40,11 +40,12 @@ class StateManager:
         return state.isDone()
 
     def reward(self, state):
-        return 1 if state.is_final_state() and state.player else -1
+        return 1 if state.is_final_state() and state.player == self.initial_player else -1
 
     def do_move(self, state, move):
         copy = state.__copy__()
         copy.take(move.move)
         return copy
+
     def is_win(self, state):
-        return state.winnerF() == self.initial_player
+        return state.winnerF() == state.initial_player
