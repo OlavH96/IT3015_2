@@ -4,6 +4,7 @@ import random
 from StateManager import *
 from MCTS import *
 from Policy import *
+import matplotlib.pyplot as plt
 
 
 def play_game(mcts, player):
@@ -34,7 +35,6 @@ def play_game(mcts, player):
             break
     if verbose:
         print("History")
-        history.reverse()
         for h in history:
             print(h[0],h[1])
         print("-" * 30)
@@ -42,26 +42,39 @@ def play_game(mcts, player):
 
 
 if __name__ == '__main__':
-    verbose = False
-    print_tree = False
+    verbose = True
+    print_tree = True
+    show_winrate_graph = False
 
-    G = 1
-    M = 200
+    G = 100
+    M = 50
 
-    N = 100
-    K = 70
+    N = 10
+    K = 5
     P = "mix"
+
+
+
+
+
+
+
+
+
+
+
 
     if P == "Player 1":
         init_player = Player.PLAYER_1
-    if P == "Player 2":
+    elif P == "Player 2":
         init_player = Player.PLAYER_2
-    if P == "mix":
+    elif P == "mix":
         init_player = random.choice([Player.PLAYER_1, Player.PLAYER_2])
     else: raise Exception("Invalid Player Choice")
 
     wins = 0
     losses = 0
+    winrate = []
     policy = Policy(init_player)
 
     stateman = StateManager()
@@ -77,6 +90,7 @@ if __name__ == '__main__':
             wins += 1
         else:
             losses += 1
+        winrate.append(((wins) /(wins+losses)) * 100)
         if P == "mix" or P == "Mix":
             if random.random() > 0.5:  # 50% chance for either player
                 init_player = Player.other(init_player)
@@ -85,6 +99,11 @@ if __name__ == '__main__':
 
     if print_tree:
         mcts.tree.print_entire_tree()
+    if show_winrate_graph:
+        plt.plot(winrate)
+        plt.xlabel("Games")
+        plt.ylabel("Winrate %")
+        plt.show()
 
     print("Wins", wins)
     print("Losses", losses)

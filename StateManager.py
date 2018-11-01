@@ -47,5 +47,5 @@ class StateManager:
         copy.take(move.move)
         return copy
 
-    def is_win(self, state):
-        return state.winnerF() == state.initial_player
+    def is_win(self, state, player):
+        return state.winnerF() == player

@@ -4,11 +4,12 @@ from Move import *
 from math import sqrt, log10
 import random
 
+
 class Policy:
 
     def __init__(self, player):
         self.player = player
-        self.c = 1  # exploration factor
+        self.c = 0  # exploration factor
 
     def Q(self, state, move, z=0):
         return move.reward
@@ -20,7 +21,7 @@ class Policy:
 
         return self.c * sqrt(log10(Ns) / (1 + Nsa))
 
-    def chose(self, node, actions, initial_player):
+    def chose(self, node, actions, initial_player, sprint=False):
 
         if hasattr(node, "content"):
             state = node.content
@@ -37,15 +38,31 @@ class Policy:
                 sum = Q - u
             options.append(PolicyChoice(state, action, sum))
         # If there are several with the same value, return a random one
-        if state.player == self.player:
+
+        # print("Options are")
+        # for o in options:
+        #     print(o)
+        # print("-"*5)
+        # if sprint:
+        #     print("Init player", initial_player)
+        if state.player == initial_player:
+            # if sprint:
+            #     print("Maximizing", state.player)
             max_indices = [i for i in range(len(options)) if options[i] == max(options, key=lambda e: e.QuSum)]
-            return options[max_indices[random.randint(0, len(max_indices)-1)]].move
-            #return max(options, key=lambda e: e.QuSum).move
+            # Optimization
+            # if sprint:
+            #     print(max_indices)
+
+            if len(max_indices) == 1: return options[max_indices[0]].move
+            return options[max_indices[random.randint(0, len(max_indices) - 1)]].move
 
         else:
+            # if sprint:
+            #     print("Maximizing", state.player)
             min_indices = [i for i in range(len(options)) if options[i] == min(options, key=lambda e: e.QuSum)]
-            return options[min_indices[random.randint(0, len(min_indices)-1)]].move
-            #return min(options, key=lambda e: e.QuSum).move
+            # Optimization
+            if len(min_indices) == 1: return options[min_indices[0]].move
+            return options[min_indices[random.randint(0, len(min_indices) - 1)]].move
 
 
 class PolicyChoice:

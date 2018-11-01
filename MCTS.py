@@ -1,5 +1,4 @@
 from Node import *
-from Move import *
 
 
 class MCTS:
@@ -27,7 +26,7 @@ class MCTS:
                 move = self.default_policy.chose(state, self.statemanager.get_moves(state), initial_state.initial_player)
                 state = self.statemanager.do_move(state, move)
 
-            if self.statemanager.is_win(state):  # state.winnerF() == self.root.player:
+            if self.statemanager.is_win(state, initial_state.initial_player):  # state.winnerF() == self.root.player:
                 wins += 1
             else:
                 losses += 1
@@ -47,11 +46,20 @@ class MCTS:
                 self.backpropagation(to_node, evaluation)  # Backpropagate
         else:
             node.visits += 1
+            # print("-"*30)
+            # player = node.content.player
+            # for edge in node.edges:  # Get all the moves / edges
+            #     to_node = edge.toNode
+            #     evaluation = self.leaf_evaluation(to_node)  # evaluate each to-node, aka the new nodes
+            #     print("Evalutaion for edge",edge.content, "is",evaluation,"for player",node.content.initial_player,"move by",player)
+            #     self.backpropagation(to_node, evaluation)
+            # print("-"*30)
 
         choices = [e.content for e in node.edges]
         # for c in choices:
         #     print(c)
-        choice = policy.chose(node, choices, node.content.initial_player)
+        choice = policy.chose(node, choices, node.content.initial_player, sprint=True)
+        choice.visits += 1
         # print("choice", choice)
         return choice
 
