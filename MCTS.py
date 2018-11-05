@@ -39,27 +39,20 @@ class MCTS:
 
         if len(node.edges) == 0 and not self.statemanager.is_final_state(node.content):
             self.node_expansion(node)  # Expand nodes one layer
-            node.visits += 1
+            #node.visits += 1
             for edge in node.edges:  # Get all the moves / edges
                 to_node = edge.toNode
                 evaluation = self.leaf_evaluation(to_node)  # evaluate each to-node, aka the new nodes
                 self.backpropagation(to_node, evaluation)  # Backpropagate
         else:
-            node.visits += 1
-            # print("-"*30)
-            # player = node.content.player
-            # for edge in node.edges:  # Get all the moves / edges
-            #     to_node = edge.toNode
-            #     evaluation = self.leaf_evaluation(to_node)  # evaluate each to-node, aka the new nodes
-            #     print("Evalutaion for edge",edge.content, "is",evaluation,"for player",node.content.initial_player,"move by",player)
-            #     self.backpropagation(to_node, evaluation)
-            # print("-"*30)
+            pass
+
 
         choices = [e.content for e in node.edges]
         # for c in choices:
         #     print(c)
-        choice = policy.chose(node, choices, node.content.initial_player, sprint=True)
-        choice.visits += 1
+        choice = policy.chose(node, choices, node.content.initial_player)
+        #choice.visits += 1
         # print("choice", choice)
         return choice
 

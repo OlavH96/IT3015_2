@@ -7,9 +7,9 @@ import random
 
 class Policy:
 
-    def __init__(self, player):
+    def __init__(self, player, c = 1):
         self.player = player
-        self.c = 0  # exploration factor
+        self.c = c  # exploration factor
 
     def Q(self, state, move, z=0):
         return move.reward
@@ -21,7 +21,7 @@ class Policy:
 
         return self.c * sqrt(log10(Ns) / (1 + Nsa))
 
-    def chose(self, node, actions, initial_player, sprint=False):
+    def chose(self, node, actions, initial_player):
 
         if hasattr(node, "content"):
             state = node.content
@@ -39,26 +39,13 @@ class Policy:
             options.append(PolicyChoice(state, action, sum))
         # If there are several with the same value, return a random one
 
-        # print("Options are")
-        # for o in options:
-        #     print(o)
-        # print("-"*5)
-        # if sprint:
-        #     print("Init player", initial_player)
         if state.player == initial_player:
-            # if sprint:
-            #     print("Maximizing", state.player)
             max_indices = [i for i in range(len(options)) if options[i] == max(options, key=lambda e: e.QuSum)]
             # Optimization
-            # if sprint:
-            #     print(max_indices)
-
             if len(max_indices) == 1: return options[max_indices[0]].move
             return options[max_indices[random.randint(0, len(max_indices) - 1)]].move
 
         else:
-            # if sprint:
-            #     print("Maximizing", state.player)
             min_indices = [i for i in range(len(options)) if options[i] == min(options, key=lambda e: e.QuSum)]
             # Optimization
             if len(min_indices) == 1: return options[min_indices[0]].move

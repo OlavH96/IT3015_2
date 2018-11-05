@@ -44,15 +44,16 @@ def play_game(mcts, player):
 if __name__ == '__main__':
     verbose = True
     print_tree = True
-    show_winrate_graph = False
+    show_winrate_graph = True
 
-    G = 100
-    M = 50
+    G = 20
+    M = 100
 
-    N = 10
-    K = 5
-    P = "mix"
+    N = 7
+    K = 3
+    P = "Player 1"
 
+    c = 0 # exploration bonus
 
 
 
@@ -75,14 +76,15 @@ if __name__ == '__main__':
     wins = 0
     losses = 0
     winrate = []
-    policy = Policy(init_player)
+    policy = Policy(init_player, c=c)
 
     stateman = StateManager()
     game = stateman.generate_initial_state([N, K], player=init_player)
 
-    mcts = MCTS(statemanager=stateman, initial_state=game, policy=policy, default_policy=policy, M=M)
 
     for i in range(G):
+
+        mcts = MCTS(statemanager=stateman, initial_state=game, policy=policy, default_policy=policy, M=M)
 
         winner = play_game(mcts, init_player)
         # mcts.tree.print_entire_tree()
@@ -92,10 +94,7 @@ if __name__ == '__main__':
             losses += 1
         winrate.append(((wins) /(wins+losses)) * 100)
         if P == "mix" or P == "Mix":
-            if random.random() > 0.5:  # 50% chance for either player
-                init_player = Player.other(init_player)
-
-
+            init_player = random.choice([Player.PLAYER_1, Player.PLAYER_2])
 
     if print_tree:
         mcts.tree.print_entire_tree()
